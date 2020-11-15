@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-int dp(long long n){
+int dp(long long n)
+{
 	int ans = 0, k = 2, c = 0;
 	while (n > 1)
 	{
@@ -29,9 +30,6 @@ int dp(long long n){
 }
 int main()
 {
-	ios::sync_with_stdio(false);
-	cin.tie(nullptr);
-
 	long long n;
 	cin >> n;
 	if (dp(n))
