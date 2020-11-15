@@ -1,30 +1,76 @@
 #include <bits/stdc++.h>
+#define ll long long
 using namespace std;
+struct pr
+{
+	ll n, pos;
+	ll val = 1;
+};
+
+pr max(pr l, pr r)
+{
+	if (l.n > r.n)
+		return l;
+	if (l.n < r.n)
+		return r;
+	l.val = l.val + r.val;
+	r.val = l.val;
+	if (l.pos < r.pos)
+		return l;
+	return r;
+}
+
+void build(ll id, ll sl, ll sr, const vector<ll> &a, vector<pr> &data)
+{
+	if (sl == sr)
+	{
+		data[id].n = a[sl];
+		data[id].pos = sl;
+		return;
+	}
+	ll m = (sl + sr) / 2;
+	build(id * 2 + 1, sl, m, a, data);
+	build(id * 2 + 2, m + 1, sr, a, data);
+	data[id] = max(data[id * 2 + 1], data[id * 2 + 2]);
+}
+
+pr get(ll id, ll sl, ll sr, ll ql, ll qr, vector<pr> &data, int &count)
+{
+	if (ql <= sl && sr <= qr)
+	{
+		return data[id];
+	}
+	ll m = (sl + sr) / 2;
+	if (qr <= m)
+		return get(id * 2 + 1, sl, m, ql, qr, data, count);
+	if (m < ql)
+		return get(id * 2 + 2, m + 1, sr, ql, qr, data, count);
+	return max(get(id * 2 + 1, sl, m, ql, qr, data, count), get(id * 2 + 2, m + 1, sr, ql, qr, data, count));
+}
+
 int main()
 {
-	ios_base::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
-	long long n, t = 1;
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
+	int n;
 	cin >> n;
-	vector<pair<long long, pair<long long, long long>>> v(n);
-	for (long long i = 0; i < n; ++i)
+	vector<ll> a(n);
+	vector<pr> data(4 * n);
+	for (int i = 0; i < n; i++)
 	{
-		cin >> v[i].first;
-		v[i].second.first = i + 1;
-		v[i].second.second = i + 1;
+		cin >> a[i];
 	}
-	sort(v.begin(), v.end());
-	for (long long i = 1; i < n; ++i)
+	build(0, 0, n - 1, a, data);
+	int q;
+	cin >> q;
+	int l, r;
+	pr ans;
+	for (int i = 0; i < q; i++)
 	{
-		v[i].second.first = min(v[i].second.first, v[i - 1].second.first);
-		v[i].second.second = max(v[i].second.second, v[i - 1].second.second);
-		if (v[i].second.second - v[i].second.first + 1 == v[i].first)
-			t++;
+		cin >> l >> r;
+		int count = 0;
+		ans = get(0, 0, n - 1, l - 1, r - 1, data, count);
+		cout << ans.n << ' ' << ans.pos + 1 << ' ';
+		cout << ans.val << '\n';
 	}
-	cout << t << endl;
-	for (long long i = 0; i < n; ++i)
-		if (v[i].second.second - v[i].second.first + 1 == v[i].first)
-			cout << v[i].second.first << ' ' << v[i].second.second << endl;
-	return 0;
 }
