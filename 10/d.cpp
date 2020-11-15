@@ -41,9 +41,17 @@ int main()
 {
 	int n;
 	cin >> n;
-	if (dp(n) != 0)
+
+	int res = dp(n);
+
+	if (res != 0)
+	{
 		cout << 1;
+	}
 	else
+	{
 		cout << 2;
+	}
+
 	return 0;
 }
